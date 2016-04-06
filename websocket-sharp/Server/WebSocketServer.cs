@@ -610,7 +610,11 @@ namespace WebSocketSharp.Server
     private void processRequest (TcpListenerWebSocketContext context)
     {
       var uri = context.RequestUri;
-      if (uri == null || uri.Port != _port) {
+      
+      // When running inside a Docker container, the ports will not
+      // match. Disabling the port check will allow running inside a container
+      // with a mapped port (e.g. 32768 -> 80)
+      if (uri == null) { // || uri.Port != _port) {
         context.Close (HttpStatusCode.BadRequest);
         return;
       }
